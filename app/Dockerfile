@@ -1,12 +1,19 @@
-FROM python:3.10-alpine3.21
+# Use a more recent base image with security patches
+FROM python:3.10-slim-bookworm  # or latest available
+
 LABEL MANTAINER="Seu Nome"
 
 WORKDIR /app
 
 COPY . /app
 
-RUN apk add --no-cache curl \
-    && pip install --trusted-host pypi.python.org -r requirements.txt
+# Update system packages
+RUN apt-get update && apt-get upgrade -y && apt-get clean
+
+# Install dependencies
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 8000
 
